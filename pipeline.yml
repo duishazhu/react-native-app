@@ -1,0 +1,62 @@
+#
+# 国内版B2C H5 Web打包构建流水线配置
+# 记得在流水线环境变量里面配置各env默认值
+# PROJECT_TYPE           区分打包的应用 (b2c/b2b/sea/point 等)
+# PROJECT_SUB_TYPE       区分打包的二级应用 (brd 等)
+#
+version: '1.1'
+envs:
+  PROJECT_NAME: gaia-mobile
+stages:
+  - stage:
+      - git-checkout:
+          alias: git-checkout
+          params:
+            depth: 1
+
+  - stage:
+      - js-build:
+          alias: pipeline-build
+          version: '1.0'
+          caches:
+            - path: /root/.npm #尝试先缓存.npm， erda不支持动态key的缓存，支持后可以直接缓存node_modules
+          params:
+            build_cmd:
+              - env
+              - npm ci
+              - npm run build
+              - npm prune --production
+            node_version: '14'
+            workdir: ${git-checkout}
+          resources:
+            cpu: 2
+            mem: 6272
+
+  - stage:
+      - release:
+          alias: release
+          version: '1.0'
+          params:
+            dice_yml: ${git-checkout}/dice.yml
+            services:
+              gaia-mobile:
+                cmd: sed -i "s^server_name .*^^g" /etc/nginx/conf.d/nginx.conf.template && envsubst "`printf '$%s' $(bash -c "compgen -e")`" < /etc/nginx/conf.d/nginx.conf.template > /etc/nginx/conf.d/default.conf && /usr/local/openresty/bin/openresty -g 'daemon off;'
+                copys:
+                  - ${pipeline-build}/public/:/app/
+                  - ${pipeline-build}/nginx.conf.template:/etc/nginx/conf.d/
+                image: registry.cn-hangzhou.aliyuncs.com/dice-third-party/terminus-nginx:0.2
+              herd:
+                cmd: cd /root/pipeline-build && npm run server
+                copys:
+                  - ${pipeline-build}:/root/
+                image: registry.erda.cloud/erda-actions/terminus-debian-herd:1.1.18-n14.19
+          resources:
+            cpu: 2
+            mem: 2048
+
+  - stage:
+      - dice:
+          alias: dice
+          params:
+            time_out: 300
+            release_id_path: ${release}

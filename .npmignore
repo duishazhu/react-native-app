@@ -1,0 +1,15 @@
+android/android.iml
+android/TRNWAppTemplate.iml
+android/local.properties
+android/build
+android/app/build
+ios/build
+ios/Pods
+**/.DS_Store
+**/.gradle
+lib
+public
+.DS_Store
+.git
+node_modules
+dist

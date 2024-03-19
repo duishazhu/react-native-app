@@ -1,0 +1,137 @@
+diff --git a/node_modules/@terminus/nusi-mobile/lib/image-picker/image-picker.tsx b/node_modules/@terminus/nusi-mobile/lib/image-picker/image-picker.tsx
+index bf0456b..997bc9c 100644
+--- a/node_modules/@terminus/nusi-mobile/lib/image-picker/image-picker.tsx
++++ b/node_modules/@terminus/nusi-mobile/lib/image-picker/image-picker.tsx
+@@ -112,6 +112,7 @@ const ImagePicker: React.FC<ImagePickerProps> = ({
+                   <TouchableOpacity
+                     testID={`image-picker-preview-${index}`}
+                     activeOpacity={0.8}
++                    style={styles.imageTouchWrap}
+                     onPress={() => (preview ? openImageViewer(index) : undefined)}
+                   >
+                     <Image {...imageProps} style={imgStyle} source={{ uri: item?.url }} />
+@@ -146,7 +147,7 @@ const ImagePicker: React.FC<ImagePickerProps> = ({
+                   onError={error => onError?.(error)}
+                   style={imageWrapStyle}
+                 >
+-                  <View style={[styles.uploadIconWrap, imgStyle]}>
++                  <View style={styles.uploadIconWrap}>
+                     <Icon type="add-to" size={IconSize[rowImageNum]} color="#6E6E6E" />
+                   </View>
+                 </Upload>
+diff --git a/node_modules/@terminus/nusi-mobile/lib/image-picker/style/index.ts b/node_modules/@terminus/nusi-mobile/lib/image-picker/style/index.ts
+index b5f464e..0ec5a8e 100644
+--- a/node_modules/@terminus/nusi-mobile/lib/image-picker/style/index.ts
++++ b/node_modules/@terminus/nusi-mobile/lib/image-picker/style/index.ts
+@@ -18,6 +18,7 @@ export default EStyleSheet.create({
+     justifyContent: 'center',
+     alignItems: 'center',
+   },
++  imageTouchWrap: {},
+   image: {
+     width: '$image_picker_image_size',
+     height: '$image_picker_image_size',
+diff --git a/node_modules/@terminus/nusi-mobile/lib/input-item/textarea.tsx b/node_modules/@terminus/nusi-mobile/lib/input-item/textarea.tsx
+index db12ee2..1607d73 100644
+--- a/node_modules/@terminus/nusi-mobile/lib/input-item/textarea.tsx
++++ b/node_modules/@terminus/nusi-mobile/lib/input-item/textarea.tsx
+@@ -139,8 +139,8 @@ const Textarea = forwardRef((props: TextareaProps, ref) => {
+             testID="text-area-wrap"
+             style={[
+               styles.areaContainer,
+-              props.style,
+               { paddingBottom: count > 0 && !isAliMP ? 30 : 10 },
++              props.style,
+               showUnderLine && { borderBottomColor: '#DDDDDD', borderBottomWidth: StyleSheet.hairlineWidth },
+             ]}
+           >
+diff --git a/node_modules/@terminus/nusi-mobile/lib/loading/index.wx.mp.tsx b/node_modules/@terminus/nusi-mobile/lib/loading/index.wx.mp.tsx
+index 0701998..882ed84 100644
+--- a/node_modules/@terminus/nusi-mobile/lib/loading/index.wx.mp.tsx
++++ b/node_modules/@terminus/nusi-mobile/lib/loading/index.wx.mp.tsx
+@@ -24,7 +24,7 @@ export default (props: LoadingProps) => {
+         } = props;
+ 
+         return toast ? (
+-          <Overlay visible={visible} animation={props.animation} style={[styles.wrapper, { backgroundColor: 'transparent' }]}>
++          <Overlay portal={false} visible={visible} animation={props.animation} style={[styles.wrapper, { backgroundColor: 'transparent' }]}>
+             <Flex style={styles.flex}>
+               <View style={[styles.wrapper, styles.toast]}>
+                 <Loading size={size} text={text} toast={toast} textDirection={textDirection} theme={theme} style={style} wrapStyle={styles}>
+diff --git a/node_modules/@terminus/nusi-mobile/lib/radio/group.tsx b/node_modules/@terminus/nusi-mobile/lib/radio/group.tsx
+index 3f030df..8278476 100644
+--- a/node_modules/@terminus/nusi-mobile/lib/radio/group.tsx
++++ b/node_modules/@terminus/nusi-mobile/lib/radio/group.tsx
+@@ -4,7 +4,7 @@ import { RadioGroupProps } from './interface';
+ import Radio from './radio';
+ 
+ const RadioGroup = (props: RadioGroupProps) => {
+-  const { defaultValue, value, direction = 'row', disabled, children, options, onChange, style } = props;
++  const { defaultValue, value, direction = 'row', disabled, children, options, onChange, style, position, checkedIconColor, unCheckIconColor, textStyle } = props;
+ 
+   const [selected, setSelected] = useState(value || defaultValue);
+ 
+@@ -21,7 +21,7 @@ const RadioGroup = (props: RadioGroupProps) => {
+         if (typeof option === 'string') {
+           // options类型为 string[]
+           return (
+-            <Radio key={option} disabled={disabled} checked={selected === option} onChange={onValueChange} value={option}>
++            <Radio key={option} disabled={disabled} checked={selected === option} onChange={onValueChange} value={option} position={position} >
+               {option}
+             </Radio>
+           );
+@@ -35,6 +35,10 @@ const RadioGroup = (props: RadioGroupProps) => {
+             onChange={onValueChange}
+             value={option.value}
+             style={option.style}
++            position={position}
++            checkedIconColor={checkedIconColor}
++            unCheckIconColor={unCheckIconColor}
++            textStyle={textStyle}
+           >
+             {option.label}
+           </Radio>
+diff --git a/node_modules/@terminus/nusi-mobile/lib/radio/interface.ts b/node_modules/@terminus/nusi-mobile/lib/radio/interface.ts
+index 7d4192c..03d4dcd 100644
+--- a/node_modules/@terminus/nusi-mobile/lib/radio/interface.ts
++++ b/node_modules/@terminus/nusi-mobile/lib/radio/interface.ts
+@@ -112,6 +112,26 @@ export interface RadioGroupProps {
+    * 容器样式
+    */
+   style?: ViewStyle;
++
++  /**
++   * icon与内容位置
++   */
++  position?: 'left' | 'right';
++
++  /**
++   * 选中颜色
++   */
++  checkedIconColor?: string;
++  /**
++   * 未选中颜色
++   */
++  unCheckIconColor?: string;
++
++  /**
++   * 文字样式
++   */
++  textStyle?: TextStyle;
++
+ }
+ 
+ export interface RadioStyles {
+diff --git a/node_modules/@terminus/nusi-mobile/lib/swipe-action/index.mp.tsx b/node_modules/@terminus/nusi-mobile/lib/swipe-action/index.mp.tsx
+index e8089b4..e1c3059 100644
+--- a/node_modules/@terminus/nusi-mobile/lib/swipe-action/index.mp.tsx
++++ b/node_modules/@terminus/nusi-mobile/lib/swipe-action/index.mp.tsx
+@@ -221,6 +221,8 @@ export default (props: SwipeActionProps) => {
+                   scale={false}
+                   disabled
+                   animation
++                  damping={40}
++                  friction={6}
+                   onTap={() => {
+                     onContainerClick();
+                   }}

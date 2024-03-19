@@ -1,0 +1,94 @@
+version: 2
+envs:
+  OSS_ENABLE: true
+  CSRF_ENABLE: true
+
+services:
+  herd:
+    cmd: "npm run server"
+    ports:
+      - 8081
+    resources:
+      cpu: 0.2
+      mem: 256
+      disk: 10
+    deployments:
+      replicas: 1
+    health_check:
+      http:
+        port: 8081
+        path: '/health/check'
+        duration: 180
+  gaia-mobile:
+    ports:
+      - 80
+    resources:
+      cpu: 0.2
+      mem: 256
+      disk: 256
+    deployments:
+      replicas: 1
+    depends_on:
+      - 'herd'
+    expose:
+      - 80
+    health_check:
+      http:
+        port: 80
+        path: '/health/check'
+        duration: 180
+
+addons:
+  api-gateway:
+    plan: 'api-gateway:basic'
+
+environments:
+  development:
+    envs:
+      OSS_ENABLE: true
+      NODE_ENV: 'development'
+      TERMINUS_TA_ENABLE: false
+      DEFAULT_TRANTOR_APP_KEY: 'gaia'
+    addons:
+      aliyun-oss-dev:
+        plan: alicloud-oss:basic
+        options:
+          version: 1.0.0
+
+  test:
+    envs:
+      OSS_ENABLE: true
+      PACK_ENV: 'test'
+      NODE_ENV: 'production'
+      TERMINUS_TA_ENABLE: false
+      DEFAULT_TRANTOR_APP_KEY: 'gaia'
+    addons:
+      aliyun-oss-test:
+        plan: alicloud-oss:basic
+        options:
+          version: 1.0.0
+
+  staging:
+    envs:
+      OSS_ENABLE: true
+      PACK_ENV: 'staging'
+      NODE_ENV: 'production'
+      TERMINUS_TA_ENABLE: false
+      DEFAULT_TRANTOR_APP_KEY: 'gaia'
+    addons:
+      aliyun-oss-staging:
+        plan: custom:basic
+        options:
+          version: 1.0.0
+
+  production:
+    resources:
+      cpu: 1
+      mem: 1536
+      scale: 2
+    envs:
+      NODE_ENV: 'production'
+      OSS_ENABLE: true
+      TERMINUS_TA_ENABLE: true
+      DEFAULT_TRANTOR_APP_KEY: 'gaia'
+    addons:

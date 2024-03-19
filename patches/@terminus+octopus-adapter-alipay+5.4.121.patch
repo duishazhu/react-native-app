@@ -1,0 +1,13 @@
+diff --git a/node_modules/@terminus/octopus-adapter-alipay/src/platform/index.ts b/node_modules/@terminus/octopus-adapter-alipay/src/platform/index.ts
+index 688977f..ae68f08 100644
+--- a/node_modules/@terminus/octopus-adapter-alipay/src/platform/index.ts
++++ b/node_modules/@terminus/octopus-adapter-alipay/src/platform/index.ts
+@@ -11,7 +11,7 @@ const apiMap = (api: TAPI) => {
+ const Platform: PlatFormInterface = {
+   OS: 'alipay',
+   API: createApiDefaultProxy(my, apiMap),
+-  select: (obj: any) => ('alipay' in obj ? obj.my : obj.default),
++  select: (obj: any) => ('alipay' in obj ? obj.alipay : obj.default),
+   get isTesting(): boolean {
+     if (process.env.NODE_DEV === 'test') {
+       return true;

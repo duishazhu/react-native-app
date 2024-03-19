@@ -1,0 +1,6 @@
+{
+  "appKey": "mbr_web_h5",
+  "appName": "会员小程序H5",
+  "appPlatform": "WEB",
+  "collectorUrl": "https://tracking-collector-dev.app.terminus.io/collect"
+}

@@ -1,0 +1,20 @@
+.home-carousel-dot-container {
+  position: absolute;
+  bottom: 14px;
+  right: 16px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+
+  .home-carousel-dot {
+    margin-left: 3px;
+    height: 4px;
+    background-color: rgba(255, 255, 255, 0.39);
+    border-radius: 2px;
+    transition: all 0.3s;
+
+    &.active {
+      background-color: #ffffff;
+    }
+  }
+}

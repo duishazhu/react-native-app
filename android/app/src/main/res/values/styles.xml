@@ -1,0 +1,25 @@
+<resources>
+
+  <!-- Base application theme. -->
+  <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
+    <!-- Customize your theme here. -->
+    <!-- <item name="android:windowIsTranslucent">true</item> -->
+    <item name="android:windowFullscreen">true</item>
+    <item name="android:windowNoTitle">true</item>
+    <item name="android:windowBackground">@mipmap/start_up</item>
+    <item name="android:editTextBackground">@drawable/edit_text</item>
+  </style>
+
+  <style name="ActivityTheme" parent="Theme.AppCompat.Light.NoActionBar">
+    <item name="android:windowIsTranslucent">true</item>
+    <item name="android:windowBackground">@mipmap/start_up</item>
+    <item name="android:editTextBackground">@drawable/edit_text</item>
+  </style>
+
+  <style name="DialogFullscreen">
+    <item name="android:windowFullscreen">true</item>
+    <item name="android:windowNoTitle">true</item>
+  </style>
+
+
+</resources>

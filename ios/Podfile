@@ -1,0 +1,154 @@
+source 'https://github.com/CocoaPods/Specs.git'
+source 'https://github.com/aliyun/aliyun-specs.git'
+
+# make sure channel.yml is fresh
+IO.popen(["npm", "run", "fresh-channel-manager"]) do |data|
+  while line = data.gets
+    puts line
+  end
+end
+
+require_relative '../node_modules/@terminus/react-native-channel-manager/util'
+require_relative '../node_modules/react-native/scripts/react_native_pods'
+
+# after loadChannelConfig! '../channel.yml', we have a global variables
+# $TCM_CONFIG --> content of channel.yml
+# $TCM_CONFIG_SUB_CHANNEL --> proc, use as $TCM_CONFIG_SUB_CHANNEL.call "libABC"
+loadChannelConfig! :path => '../channel.yml'
+
+# require_relative '../node_modules/@terminus/react-native-tms/scripts/autolink/react_native_pods'
+# require_relative '../node_modules/@terminus/react-native-tms/scripts/autolink/native_modules.rb'
+# require_relative '../node_modules/react-native/scripts/react_native_pods'
+require_relative '../node_modules/@react-native-community/cli-platform-ios/native_modules'
+
+react_native_path = '../node_modules/react-native'
+terminus_path = '../node_modules/@terminus'
+platform :ios, '10.0'
+#inhibit_all_warnings!
+
+# 是否使用二进制库来进行编译
+use_react_native_framework = true
+# 是否使用ccache来进行编译
+use_cccahe = false
+# 是否支持iOS10
+support_version10 = true
+
+target 'tmall-app' do
+
+  config = use_native_modules!
+
+  # use_react_native!(
+  #   :path => config[:reactNativePath],
+  #   # to enable hermes on iOS, change `false` to `true` and then install pods
+  #   :hermes_enabled => false
+  # )
+
+  pod 'IQKeyboardManager'
+
+  use_react_native!(
+    :path => config[:reactNativePath],
+    # to enable hermes on iOS, change `false` to `true` and then install pods
+    :hermes_enabled => false
+  )
+  use_flipper!({ "Flipper-DoubleConversion" => "1.1.7" })
+
+#   pod 'rn-debug', :path => '../node_modules/@terminus/rn-debug/ios', :configurations => ['Debug','Test']
+#   pod 'rn-env', :path => '../node_modules/@terminus/rn-debug/ios'
+#   pod 'react-native-amap-sdk/LocationAmap', :path => '../node_modules/@terminus/react-native-amap-sdk/ios'
+#   pod 'react-native-amap-sdk/Map2dAmap', :path => '../node_modules/@terminus/react-native-amap-sdk/ios'
+#   pod 'react-native-splash-screen', :path => '../node_modules/react-native-splash-screen'
+
+  if use_react_native_framework
+    pod 'TNReactNative', '~> 0.66.3.1', :configurations => ['Release']
+    pod 'TNReactNative-debug', '~> 0.66.3.1', :configurations => ['Debug', 'Test']
+  end
+end
+
+project 'tmall-app', 'Test' => :release, 'Debug' => :debug,'Release' => :release
+
+# 使用二进制库时，本地源码不进行编译
+pre_install do |installer|
+  if use_react_native_framework
+    header_targets = ['FBReactNativeSpec', 'RCTTypeSafety', 'React-Core', 'React-CoreModules', 'React-RCTAnimation', 'React-RCTBlob', 'React-RCTImage', 'React-RCTLinking', 'React-RCTNetwork', 'React-RCTSettings', 'React-RCTText', 'React-RCTVibration', 'React-cxxreact', 'React-jsi', 'React-jsiexecutor', 'React-jsinspector', 'ReactCommon']
+    for target in installer.pod_targets
+      if header_targets.include? target.name
+        def target.should_build?
+          return false
+        end
+      end
+    end
+  end
+end
+
+post_install do |installer|
+  installer.pods_project.build_configurations.each do |config|
+    config.build_settings["EXCLUDED_ARCHS[sdk=iphonesimulator*]"] = "arm64"
+  end
+  if support_version10
+    installer.pods_project.targets.each do |target|
+      target.build_configurations.each do |config|
+      config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '10.0' if config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'].to_f > 10.0
+      end
+    end
+  end
+
+  ignore_target = ['react-native-netinfo', 'react-native-image-picker', 'DoraemonKit']
+  installer.pods_project.targets.each do |target|
+    target_use_ccache = ignore_target.include?(target.name) ? false : use_cccahe
+    target.build_configurations.each do |config|
+      #关闭 Enable Modules
+      config.build_settings['CLANG_ENABLE_MODULES'] = target_use_ccache ? 'NO' : 'YES'
+      # 在生成的 Pods 项目文件中加入 CC 参数
+      config.build_settings['CC'] = target_use_ccache ? '$(SRCROOT)/../ccache-clang' : ''
+    end
+  end
+  #   # Enables Flipper.
+  #   #
+  #   # Note that if you have use_frameworks! enabled, Flipper will not work and
+  #   # you should disable these next two lines.
+  #   add_flipper_pods!
+  #   flipper_post_install(installer)
+  #   installer.pods_project.targets.each do |target|
+  #     if target.name == 'yoga'
+  #         # Workaround: react-native v0.52 bug issue #17274
+  #         # node_modules/react-native/ReactCommon/yoga/yoga/YGNodePrint.cpp:208:46: Implicit conversion loses integer
+  #         # precision: 'size_type' (aka 'unsigned long') to 'const uint32_t' (aka 'const unsigned int')
+  #         # https://github.com/facebook/react-native/issues/17274#issuecomment-356363557
+  #         target.build_configurations.each do |config|
+  #             config.build_settings['GCC_TREAT_WARNINGS_AS_ERRORS'] = 'NO'
+  #             config.build_settings['GCC_WARN_64_TO_32_BIT_CONVERSION'] = 'NO'
+  #         end
+  #     end
+  #     if target.name == "RNSVG"
+  #         target.build_configurations.each do |config|
+  #             config.build_settings['GCC_NO_COMMON_BLOCKS'] = 'NO'
+  #         end
+  #     end
+  #     if (target.name == 'react-native-env-switch')
+  #       target.build_configurations.each do |config|
+  #           if config.name == 'Release'
+  #               puts "#{target.name} config build_settings['GCC_PREPROCESSOR_DEFINITIONS']<<RELEASE=1 "
+  #               config.build_settings['GCC_PREPROCESSOR_DEFINITIONS'] ||= ['$(inherited)']
+  #               config.build_settings['GCC_PREPROCESSOR_DEFINITIONS'] << 'RELEASE=1'
+  #           end
+  #       end
+  #   end
+  # end
+  ## Fix for XCode 12.5
+  find_and_replace("Pods/FBRetainCycleDetector/FBRetainCycleDetector/Layout/Classes/FBClassStrongLayout.mm",
+    "layoutCache[currentClass] = ivars;", "layoutCache[(id<NSCopying>)currentClass] = ivars;")
+end
+
+def find_and_replace(dir, findstr, replacestr)
+  Dir[dir].each do |name|
+    text = File.read(name)
+    replace = text.gsub(findstr,replacestr)
+    if text != replace
+      puts "Fix: " + name
+      File.chmod(0666,name) # make file writable
+      File.open(name, "w") { |file| file.puts replace }
+      STDOUT.flush
+    end
+  end
+  Dir[dir + '*/'].each(&method(:find_and_replace))
+end

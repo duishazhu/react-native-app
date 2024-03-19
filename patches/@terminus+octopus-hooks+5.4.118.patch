@@ -1,0 +1,39 @@
+diff --git a/node_modules/@terminus/octopus-hooks/dist/useOnShow/index.mp.js b/node_modules/@terminus/octopus-hooks/dist/useOnShow/index.mp.js
+index a0d75d6..17e7eca 100644
+--- a/node_modules/@terminus/octopus-hooks/dist/useOnShow/index.mp.js
++++ b/node_modules/@terminus/octopus-hooks/dist/useOnShow/index.mp.js
+@@ -1,4 +1,33 @@
+ "use strict";
++var __read = (this && this.__read) || function (o, n) {
++    var m = typeof Symbol === "function" && o[Symbol.iterator];
++    if (!m) return o;
++    var i = m.call(o), r, ar = [], e;
++    try {
++        while ((n === void 0 || n-- > 0) && !(r = i.next()).done) ar.push(r.value);
++    }
++    catch (error) { e = { error: error }; }
++    finally {
++        try {
++            if (r && !r.done && (m = i["return"])) m.call(i);
++        }
++        finally { if (e) throw e.error; }
++    }
++    return ar;
++};
++var __spread = (this && this.__spread) || function () {
++    for (var ar = [], i = 0; i < arguments.length; i++) ar = ar.concat(__read(arguments[i]));
++    return ar;
++};
+ Object.defineProperty(exports, "__esModule", { value: true });
++var react_1 = require("react");
+ var octopus_core_1 = require("@terminus/octopus-core");
+-exports.default = octopus_core_1.useOnShow;
++exports.default = (function (callback) {
++    octopus_core_1.useOnShow(react_1.useCallback(function (_) {
++        var args = [];
++        for (var _i = 1; _i < arguments.length; _i++) {
++            args[_i - 1] = arguments[_i];
++        }
++        return callback.apply(void 0, __spread([undefined], args));
++    }, [callback]));
++});

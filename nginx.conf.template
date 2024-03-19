@@ -1,0 +1,78 @@
+map $uri $backendUrl {
+  default                                     http://${HERD_HOST}:${HERD_PORT};
+}
+
+map $uri $local_cache {
+  default                           "off";
+}
+
+# 缓存文件存储位置 /etc/nginx/conf.d/caches
+# 缓存保留时间 60分钟，用于容灾
+# 缓存生效时长 30秒
+# 缓存200，301，302的请求
+proxy_cache_path /etc/nginx/conf.d/caches levels=1:2 keys_zone=tmall_app:10m max_size=1g inactive=60m use_temp_path=off;
+proxy_cache_use_stale error timeout invalid_header updating http_500 http_502 http_503 http_504;
+proxy_cache_valid 200 301 302 30s;
+proxy_cache_key $host$request_uri;
+proxy_ignore_headers "Cache-Control" "X-Accel-Expires" "Expires" "Vary" "Set-Cookie";
+add_header Nginx-Cache $upstream_cache_status;
+proxy_cache_bypass $arg_no_cache $cookie_no_cache;
+proxy_cache_background_update on;
+proxy_cache $local_cache;
+
+server {
+  # 固定值
+  listen 80;
+  # 固定值
+  server_name localhost;
+  # 固定值
+  root        /app/public;
+
+  # 配置压缩参数
+  # compression
+  gzip on;
+  gzip_min_length   2k;
+  gzip_buffers      4 16k;
+  gzip_http_version 1.0;
+  gzip_comp_level   3;
+  gzip_types        text/plain application/javascript application/x-javascript text/css application/xml text/javascript application/x-httpd-php image/jpeg image/gif image/png;
+  gzip_vary on;
+
+  # 配置 Header
+  add_header X-Xss-Protection "1; mode=block" always;
+  add_header X-Content-Type-Options "nosniff" always;
+
+  # 配置路由规则
+
+  # pipline.yml 和 dice.yml 中 herd 的服务的name必须为herd。
+  # https://docs.terminus.io/dice-docs-3-7/user-manul/application/application-deployment.html#%E6%9C%8D%E5%8A%A1%E5%8F%91%E7%8E%B0
+  set $herdUrl http://${HERD_HOST}:${HERD_PORT};
+
+  # 健康检查
+  location = /health/check {
+    default_type    application/json;
+    return          200 '{"success":"OK"}';
+  }
+
+  # 页面请求发送到herd上以便ssr
+  location / {
+    proxy_pass              $herdUrl;
+    proxy_set_header        X-Real-IP $remote_addr;
+    proxy_set_header        X-Forwarded-For $proxy_add_x_forwarded_for;
+    proxy_set_header        X-Forwarded-Host $host;
+  }
+
+  # 将其他所有接口代理到后端
+  location /api {
+    proxy_pass              $backendUrl;
+    proxy_set_header        X-Real-IP $remote_addr;
+    proxy_set_header        X-Forwarded-For $proxy_add_x_forwarded_for;
+    proxy_set_header        X-Forwarded-Host $host;
+  }
+
+  # 微信公众号域名认证
+  location ~ /oM0hoOqz4T.txt {
+    default_type text/plain;
+    return 200 '89ee60358c512d5d8ccc4e623b58172d';
+  }
+}

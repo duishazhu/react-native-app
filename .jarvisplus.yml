@@ -1,0 +1,20 @@
+swaggers:
+  # 远程 swagger 文件, url 请带上 /v2/api-docs
+  - swaggerUrl: https://bbc-dev-marketing-runtime.app.terminus.io/v2/api-docs?group=member
+    # 生成文件路径（相对于项目根目录），文件位置没有要求
+    targetPath: src/services/member.member.ts
+  - swaggerUrl: https://bbc-dev-marketing-runtime.app.terminus.io/v2/api-docs?group=coupon
+    targetPath: src/services/member.coupon.ts
+  - swaggerUrl: https://bbc-dev-marketing-runtime.app.terminus.io/v2/api-docs?group=promotion
+    targetPath: src/services/member.promotion.ts
+  - swaggerUrl: https://bbc-dev-marketing-runtime.app.terminus.io/v2/api-docs?group=marketing
+    targetPath: src/services/member.marketing.ts
+
+# api client 生成语言，目前仅支持 ts
+targetLanguage: ts
+# 所依赖的请求代理模块 superagent-request | whatwg-fetch | 自定义模版路径
+template: utils-request
+# 函数命名风格 camelCase(default) | PascalCase | snake_case | camelSnake_case | legacy
+nameConvention: camelCase
+# 开启参数合并
+mergeParam: true

@@ -1,0 +1,13 @@
+diff --git a/node_modules/@terminus/react-native-octopus/src/components/SafeAreaView/index.tsx b/node_modules/@terminus/react-native-octopus/src/components/SafeAreaView/index.tsx
+index 0f17afb..18603b1 100644
+--- a/node_modules/@terminus/react-native-octopus/src/components/SafeAreaView/index.tsx
++++ b/node_modules/@terminus/react-native-octopus/src/components/SafeAreaView/index.tsx
+@@ -5,7 +5,7 @@ import { flattenStyle } from '../../utils';
+ import styles from './index.module.less';
+ import wrapper from '../../compWrapper';
+ 
+-const areaPhone = ["iPhone X", "iPhone 11", "iPhone 12", "iPhone 13"]
++const areaPhone = ["iPhone X", "iPhone 11", "iPhone 12", "iPhone 13", "iPhone 14", "iPhone 15", "iPhone 16"]
+ 
+ interface ISafeAreaView {
+   style?: React.CSSProperties | Array<React.CSSProperties>;

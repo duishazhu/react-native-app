@@ -1,0 +1,444 @@
+diff --git a/node_modules/webpack-hot-middleware/client.js b/node_modules/webpack-hot-middleware/client.js
+index 81d0837..2664224 100644
+--- a/node_modules/webpack-hot-middleware/client.js
++++ b/node_modules/webpack-hot-middleware/client.js
+@@ -2,7 +2,7 @@
+ /*global __resourceQuery __webpack_public_path__*/
+ 
+ var options = {
+-  path: '/__webpack_hmr',
++  path: "/__webpack_hmr",
+   timeout: 20 * 1000,
+   overlay: true,
+   reload: false,
+@@ -12,7 +12,7 @@ var options = {
+   autoConnect: true,
+   overlayStyles: {},
+   overlayWarnings: false,
+-  ansiColors: {},
++  ansiColors: {}
+ };
+ if (__resourceQuery) {
+   var querystring = require('querystring');
+@@ -25,8 +25,8 @@ if (typeof window === 'undefined') {
+ } else if (typeof window.EventSource === 'undefined') {
+   console.warn(
+     "webpack-hot-middleware's client requires EventSource to work. " +
+-      'You should include a polyfill if you want to support this browser: ' +
+-      'https://developer.mozilla.org/en-US/docs/Web/API/Server-sent_events#Tools'
++    "You should include a polyfill if you want to support this browser: " +
++    "https://developer.mozilla.org/en-US/docs/Web/API/Server-sent_events#Tools"
+   );
+ } else {
+   if (options.autoConnect) {
+@@ -41,8 +41,7 @@ function setOptionsAndConnect(overrides) {
+ }
+ 
+ function setOverrides(overrides) {
+-  if (overrides.autoConnect)
+-    options.autoConnect = overrides.autoConnect == 'true';
++  if (overrides.autoConnect) options.autoConnect = overrides.autoConnect == 'true';
+   if (overrides.path) options.path = overrides.path;
+   if (overrides.timeout) options.timeout = overrides.timeout;
+   if (overrides.overlay) options.overlay = overrides.overlay !== 'false';
+@@ -62,10 +61,8 @@ function setOverrides(overrides) {
+     options.path = __webpack_public_path__ + options.path;
+   }
+ 
+-  if (overrides.ansiColors)
+-    options.ansiColors = JSON.parse(overrides.ansiColors);
+-  if (overrides.overlayStyles)
+-    options.overlayStyles = JSON.parse(overrides.overlayStyles);
++  if (overrides.ansiColors) options.ansiColors = JSON.parse(overrides.ansiColors);
++  if (overrides.overlayStyles) options.overlayStyles = JSON.parse(overrides.overlayStyles);
+ 
+   if (overrides.overlayWarnings) {
+     options.overlayWarnings = overrides.overlayWarnings == 'true';
+@@ -78,8 +75,8 @@ function EventSourceWrapper() {
+   var listeners = [];
+ 
+   init();
+-  var timer = setInterval(function () {
+-    if (new Date() - lastActivity > options.timeout) {
++  var timer = setInterval(function() {
++    if ((new Date() - lastActivity) > options.timeout) {
+       handleDisconnect();
+     }
+   }, options.timeout / 2);
+@@ -92,7 +89,7 @@ function EventSourceWrapper() {
+   }
+ 
+   function handleOnline() {
+-    if (options.log) console.log('[HMR] connected');
++    if (options.log) console.log("[HMR] connected");
+     lastActivity = new Date();
+   }
+ 
+@@ -110,9 +107,9 @@ function EventSourceWrapper() {
+   }
+ 
+   return {
+-    addMessageListener: function (fn) {
++    addMessageListener: function(fn) {
+       listeners.push(fn);
+-    },
++    }
+   };
+ }
+ 
+@@ -132,14 +129,14 @@ function connect() {
+   getEventSourceWrapper().addMessageListener(handleMessage);
+ 
+   function handleMessage(event) {
+-    if (event.data == '\uD83D\uDC93') {
++    if (event.data == "\uD83D\uDC93") {
+       return;
+     }
+     try {
+       processMessage(JSON.parse(event.data));
+     } catch (ex) {
+       if (options.warn) {
+-        console.warn('Invalid HMR message: ' + event.data + '\n' + ex);
++        console.warn("Invalid HMR message: " + event.data + "\n" + ex);
+       }
+     }
+   }
+@@ -165,21 +162,17 @@ function createReporter() {
+   if (typeof document !== 'undefined' && options.overlay) {
+     overlay = require('./client-overlay')({
+       ansiColors: options.ansiColors,
+-      overlayStyles: options.overlayStyles,
++      overlayStyles: options.overlayStyles
+     });
+   }
+ 
+   var styles = {
+-    errors: 'color: #ff0000;',
+-    warnings: 'color: #999933;',
++    errors: "color: #ff0000;",
++    warnings: "color: #999933;"
+   };
+   var previousProblems = null;
+   function log(type, obj) {
+-    var newProblems = obj[type]
+-      .map(function (msg) {
+-        return strip(msg);
+-      })
+-      .join('\n');
++    var newProblems = obj[type].map(function(msg) { return strip(msg); }).join('\n');
+     if (previousProblems == newProblems) {
+       return;
+     } else {
+@@ -187,19 +180,19 @@ function createReporter() {
+     }
+ 
+     var style = styles[type];
+-    var name = obj.name ? "'" + obj.name + "' " : '';
+-    var title = '[HMR] bundle ' + name + 'has ' + obj[type].length + ' ' + type;
++    var name = obj.name ? "'" + obj.name + "' " : "";
++    var title = "[HMR] bundle " + name + "has " + obj[type].length + " " + type;
+     // NOTE: console.warn or console.error will print the stack trace
+     // which isn't helpful here, so using console.log to escape it.
+     if (console.group && console.groupEnd) {
+-      console.group('%c' + title, style);
+-      console.log('%c' + newProblems, style);
++      console.group("%c" + title, style);
++      console.log("%c" + newProblems, style);
+       console.groupEnd();
+     } else {
+       console.log(
+-        '%c' + title + '\n\t%c' + newProblems.replace(/\n/g, '\n\t'),
+-        style + 'font-weight: bold;',
+-        style + 'font-weight: normal;'
++        "%c" + title + "\n\t%c" + newProblems.replace(/\n/g, "\n\t"),
++        style + "font-weight: bold;",
++        style + "font-weight: normal;"
+       );
+     }
+   }
+@@ -208,7 +201,7 @@ function createReporter() {
+     cleanProblemsCache: function () {
+       previousProblems = null;
+     },
+-    problems: function (type, obj) {
++    problems: function(type, obj) {
+       if (options.warn) {
+         log(type, obj);
+       }
+@@ -221,12 +214,12 @@ function createReporter() {
+       }
+       return true;
+     },
+-    success: function () {
++    success: function() {
+       if (overlay) overlay.clear();
+     },
+-    useCustomOverlay: function (customOverlay) {
++    useCustomOverlay: function(customOverlay) {
+       overlay = customOverlay;
+-    },
++    }
+   };
+ }
+ 
+@@ -235,28 +228,24 @@ var processUpdate = require('./process-update');
+ var customHandler;
+ var subscribeAllHandler;
+ function processMessage(obj) {
+-  switch (obj.action) {
+-    case 'building':
++  switch(obj.action) {
++    case "building":
+       if (options.log) {
+         console.log(
+-          '[HMR] bundle ' +
+-            (obj.name ? "'" + obj.name + "' " : '') +
+-            'rebuilding'
++          "[HMR] bundle " + (obj.name ? "'" + obj.name + "' " : "") +
++          "rebuilding"
+         );
+       }
+       break;
+-    case 'built':
++    case "built":
+       if (options.log) {
+         console.log(
+-          '[HMR] bundle ' +
+-            (obj.name ? "'" + obj.name + "' " : '') +
+-            'rebuilt in ' +
+-            obj.time +
+-            'ms'
++          "[HMR] bundle " + (obj.name ? "'" + obj.name + "' " : "") +
++          "rebuilt in " + obj.time + "ms"
+         );
+       }
+-    // fall through
+-    case 'sync':
++      // fall through
++    case "sync":
+       if (obj.name && options.name && obj.name !== options.name) {
+         return;
+       }
+@@ -275,7 +264,7 @@ function processMessage(obj) {
+           reporter.success();
+         }
+       }
+-      if (applyUpdate) {
++      if (applyUpdate && obj.action === "built") {
+         processUpdate(obj.hash, obj.modules, options);
+       }
+       break;
+@@ -301,6 +290,6 @@ if (module) {
+     useCustomOverlay: function useCustomOverlay(customOverlay) {
+       if (reporter) reporter.useCustomOverlay(customOverlay);
+     },
+-    setOptionsAndConnect: setOptionsAndConnect,
++    setOptionsAndConnect: setOptionsAndConnect
+   };
+ }
+diff --git a/node_modules/webpack-hot-middleware/middleware.js b/node_modules/webpack-hot-middleware/middleware.js
+index 9847ae7..fe6f04f 100644
+--- a/node_modules/webpack-hot-middleware/middleware.js
++++ b/node_modules/webpack-hot-middleware/middleware.js
+@@ -5,56 +5,43 @@ var pathMatch = helpers.pathMatch;
+ 
+ function webpackHotMiddleware(compiler, opts) {
+   opts = opts || {};
+-  opts.log =
+-    typeof opts.log == 'undefined' ? console.log.bind(console) : opts.log;
++  opts.log = typeof opts.log == 'undefined' ? console.log.bind(console) : opts.log;
+   opts.path = opts.path || '/__webpack_hmr';
+   opts.heartbeat = opts.heartbeat || 10 * 1000;
+ 
+   var eventStream = createEventStream(opts.heartbeat);
+-  var latestStats = null;
+-  var closed = false;
++  var latestBundles = null;
++  var isValid = false;
+ 
+   if (compiler.hooks) {
+-    compiler.hooks.invalid.tap('webpack-hot-middleware', onInvalid);
+-    compiler.hooks.done.tap('webpack-hot-middleware', onDone);
++    compiler.hooks.invalid.tap("webpack-hot-middleware", onInvalid);
++    compiler.hooks.done.tap("webpack-hot-middleware", onDone);
+   } else {
+-    compiler.plugin('invalid', onInvalid);
+-    compiler.plugin('done', onDone);
++    compiler.plugin("invalid", onInvalid);
++    compiler.plugin("done", onDone);
+   }
+   function onInvalid() {
+-    if (closed) return;
+-    latestStats = null;
+-    if (opts.log) opts.log('webpack building...');
+-    eventStream.publish({ action: 'building' });
++    isValid = false;
++    if (opts.log) opts.log("webpack building...");
++    eventStream.publish({action: "building"});
+   }
+   function onDone(statsResult) {
+-    if (closed) return;
+     // Keep hold of latest stats so they can be propagated to new clients
+-    latestStats = statsResult;
+-    publishStats('built', latestStats, eventStream, opts.log);
++    var bundles = extractBundles(statsResult.toJson({ errorDetails: false }));
++    isValid = true;
++    publishStats(latestBundles, bundles, eventStream, opts.log);
++    latestBundles = bundles;
+   }
+-  var middleware = function (req, res, next) {
+-    if (closed) return next();
++  var middleware = function(req, res, next) {
+     if (!pathMatch(req.url, opts.path)) return next();
+     eventStream.handler(req, res);
+-    if (latestStats) {
++    if (latestBundles && isValid) {
+       // Explicitly not passing in `log` fn as we don't want to log again on
+       // the server
+-      publishStats('sync', latestStats, eventStream);
++      publishStats(latestBundles, latestBundles, eventStream);
+     }
+   };
+-  middleware.publish = function (payload) {
+-    if (closed) return;
+-    eventStream.publish(payload);
+-  };
+-  middleware.close = function () {
+-    if (closed) return;
+-    // Can't remove compiler plugins, so we just set a flag and noop if closed
+-    // https://github.com/webpack/tapable/issues/32#issuecomment-350644466
+-    closed = true;
+-    eventStream.close();
+-    eventStream = null;
+-  };
++  middleware.publish = eventStream.publish;
+   return middleware;
+ }
+ 
+@@ -62,95 +49,58 @@ function createEventStream(heartbeat) {
+   var clientId = 0;
+   var clients = {};
+   function everyClient(fn) {
+-    Object.keys(clients).forEach(function (id) {
++    Object.keys(clients).forEach(function(id) {
+       fn(clients[id]);
+     });
+   }
+-  var interval = setInterval(function heartbeatTick() {
+-    everyClient(function (client) {
+-      client.write('data: \uD83D\uDC93\n\n');
++  setInterval(function heartbeatTick() {
++    everyClient(function(client) {
++      client.write("data: \uD83D\uDC93\n\n");
+     });
+   }, heartbeat).unref();
+   return {
+-    close: function () {
+-      clearInterval(interval);
+-      everyClient(function (client) {
+-        if (!client.finished) client.end();
+-      });
+-      clients = {};
+-    },
+-    handler: function (req, res) {
+-      var headers = {
++    handler: function(req, res) {
++      req.socket.setKeepAlive(true);
++      res.writeHead(200, {
+         'Access-Control-Allow-Origin': '*',
+         'Content-Type': 'text/event-stream;charset=utf-8',
+         'Cache-Control': 'no-cache, no-transform',
++        'Connection': 'keep-alive',
+         // While behind nginx, event stream should not be buffered:
+         // http://nginx.org/docs/http/ngx_http_proxy_module.html#proxy_buffering
+-        'X-Accel-Buffering': 'no',
+-      };
+-
+-      var isHttp1 = !(parseInt(req.httpVersion) >= 2);
+-      if (isHttp1) {
+-        req.socket.setKeepAlive(true);
+-        Object.assign(headers, {
+-          Connection: 'keep-alive',
+-        });
+-      }
+-
+-      res.writeHead(200, headers);
++        'X-Accel-Buffering': 'no'
++      });
+       res.write('\n');
+       var id = clientId++;
+       clients[id] = res;
+-      req.on('close', function () {
+-        if (!res.finished) res.end();
++      req.on("close", function(){
+         delete clients[id];
+       });
+     },
+-    publish: function (payload) {
+-      everyClient(function (client) {
+-        client.write('data: ' + JSON.stringify(payload) + '\n\n');
++    publish: function(payload) {
++      everyClient(function(client) {
++        client.write("data: " + JSON.stringify(payload) + "\n\n");
+       });
+-    },
++    }
+   };
+ }
+ 
+-function publishStats(action, statsResult, eventStream, log) {
+-  var stats = statsResult.toJson({
+-    all: false,
+-    cached: true,
+-    children: true,
+-    modules: true,
+-    timings: true,
+-    hash: true,
+-  });
++function publishStats(latestBundles, bundles, eventStream, log) {
+   // For multi-compiler, stats will be an object with a 'children' array of stats
+-  var bundles = extractBundles(stats);
+-  bundles.forEach(function (stats) {
+-    var name = stats.name || '';
+-
+-    // Fallback to compilation name in case of 1 bundle (if it exists)
+-    if (bundles.length === 1 && !name && statsResult.compilation) {
+-      name = statsResult.compilation.name || '';
+-    }
+-
++  bundles.forEach(function(stats, idx) {
+     if (log) {
+-      log(
+-        'webpack built ' +
+-          (name ? name + ' ' : '') +
+-          stats.hash +
+-          ' in ' +
+-          stats.time +
+-          'ms'
+-      );
++      log("webpack built " + (stats.name ? stats.name + " " : "") +
++        stats.hash + " in " + stats.time + "ms");
+     }
++    var action = (!latestBundles || latestBundles[idx].hash === stats.hash) ? "sync" : "built";
+     eventStream.publish({
+-      name: name,
++      name: stats.name,
+       action: action,
+       time: stats.time,
+       hash: stats.hash,
+       warnings: stats.warnings || [],
+       errors: stats.errors || [],
+-      modules: buildModuleMap(stats.modules),
++      modules: buildModuleMap(stats.modules)
+     });
+   });
+ }
+@@ -168,7 +118,7 @@ function extractBundles(stats) {
+ 
+ function buildModuleMap(modules) {
+   var map = {};
+-  modules.forEach(function (module) {
++  modules.forEach(function(module) {
+     map[module.id] = module.name;
+   });
+   return map;

@@ -1,0 +1,15 @@
+diff --git a/node_modules/@terminus/rmc-calendar/src/calendar/day/basic/index.tsx b/node_modules/@terminus/rmc-calendar/src/calendar/day/basic/index.tsx
+index 63c1678..4bcf840 100644
+--- a/node_modules/@terminus/rmc-calendar/src/calendar/day/basic/index.tsx
++++ b/node_modules/@terminus/rmc-calendar/src/calendar/day/basic/index.tsx
+@@ -64,8 +64,8 @@ class Day extends React.Component<any, any> {
+               <Text allowFontScaling={false} style={textStyle}>
+                 {String(marking.dayText || this.props.children)}
+               </Text>
+-              { this.props.state === 'selected-head' ?  <Text testID='rmc-calendar-day-start' style={{fontSize: 8, color: '#ffffff'}}>{start}</Text> : null }
+-              { this.props.state === 'selected-tail' ?  <Text testID='rmc-calendar-day-end' style={{fontSize: 8, color: '#ffffff'}}>{end}</Text> : null }
++              { this.props.state === 'selected-head' ?  <Text testID='rmc-calendar-day-start' style={this.style.startEndText}>{start}</Text> : null }
++              { this.props.state === 'selected-tail' ?  <Text testID='rmc-calendar-day-end' style={this.style.startEndText}>{end}</Text> : null }
+               { this.props.state === 'today' ?  <Text testID='rmc-calendar-day-current' style={{color: '#CC342C'}}>{'•'}</Text> : null }
+             </>
+           )

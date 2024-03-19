@@ -1,0 +1,34 @@
+#
+# 国内版B2C 微信小程序打包发布流水线配置
+# 记得在流水线环境变量里面配置各env默认值
+# PROJECT_TYPE           区分打包的应用 (b2c/b2b/sea/point 等)
+#
+version: "1.1"
+name: "deploy-wechat"
+envs:
+  PROJECT_NAME: gaia-mobile
+stages:
+  - stage:
+      - git-checkout:
+          alias: git-checkout
+          description: 代码仓库克隆
+          params:
+            depth: 1
+  - stage:
+      - custom-script:
+          alias: custom-script
+          version: "2.0"
+          caches:
+            - path: /root/.npm #尝试先缓存.npm， erda不支持动态key的缓存，支持后可以直接缓存node_modules
+          image: registry.erda.cloud/erda-actions/terminus-debian-node:14.19-lts
+          # 新版 Erda 支持命令代码块，对于旧版 Erda 可以去掉 '|-' 并在每条命令前加 '-'
+          commands: |-
+            cp -r ${git-checkout}/. ./
+            npm i miniprogram-ci -g
+            sed -i "$(grep -n canvas package.json | cut -f1 -d:)d" package.json && npm i
+            node scripts/merge-mp-comp.js && npx octopus build --compress --config-path $(pwd)/octopus.config.js
+            echo {} > dist/wx/project.config.json
+            miniprogram-ci upload --pp dist/wx --pkp ((WX_MP_CERT_URL)) --appid ${WX_MP_APP_ID} --uv ${MP_VERSION} --ud "${DICE_WORKSPACE}-${PIPELINE_SECRET_GITTAR_AUTHOR}-${GITTAR_MESSAGE}" -r ${MP_ROBOT:-1}
+          resources:
+            cpu: 1
+            mem: 2048

@@ -1,0 +1,24 @@
+{
+  "compilerOptions": {
+    "module": "es2020",
+    "target": "es2018",
+    "noImplicitAny": false,
+    "noImplicitThis": false,
+    "sourceMap": true,
+    "lib": ["es7", "dom"],
+    "moduleResolution": "node",
+    "allowSyntheticDefaultImports": true,
+    "rootDir": "./",
+    "outDir": "./dist",
+    "allowJs": true,
+    "baseUrl": "./",
+    "jsx": "react",
+    "typeRoots": ["node_modules/@types", "node_modules/@terminus"],
+    "types": ["node", "octopus-shared-types", "google.maps"],
+    "paths": {
+      "*": ["src/components/*", "src/*", "origin/src/components/*", "origin/src/*", "./*"]
+    }
+  },
+  "exclude": ["node_modules", "public", "ios", "android", "docs", ".octopus"],
+  "include": ["src", "origin/src"]
+}

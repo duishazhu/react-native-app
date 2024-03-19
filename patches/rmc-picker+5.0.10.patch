@@ -1,0 +1,20 @@
+diff --git a/node_modules/rmc-picker/lib/NativePicker.ios.js b/node_modules/rmc-picker/lib/NativePicker.ios.js
+index 54a69f7..451c5b2 100644
+--- a/node_modules/rmc-picker/lib/NativePicker.ios.js
++++ b/node_modules/rmc-picker/lib/NativePicker.ios.js
+@@ -1,12 +1,14 @@
+ "use strict";
+ 
++import {Picker} from '@react-native-picker/picker';
++
+ Object.defineProperty(exports, "__esModule", {
+   value: true
+ });
+ Object.defineProperty(exports, "default", {
+   enumerable: true,
+   get: function get() {
+-    return _reactNative.Picker;
++    return Picker;
+   }
+ });
+ 

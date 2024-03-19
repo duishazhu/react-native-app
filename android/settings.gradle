@@ -1,0 +1,17 @@
+rootProject.name = 'tmall-app'
+
+// include ':rn-debug'
+// project(':rn-debug').projectDir = new File(rootProject.projectDir, '../node_modules/@terminus/rn-debug/android/debug')
+
+// include ':rn-env'
+// project(':rn-env').projectDir = new File(rootProject.projectDir, '../node_modules/@terminus/rn-debug/android/env')
+
+// include ':react-native-amap-sdk'
+// project(':react-native-amap-sdk').projectDir = new File(rootProject.projectDir, '../node_modules/@terminus/react-native-amap-sdk/android/locationamap')
+// include ':react-native-2damap-sdk'
+// project(':react-native-2damap-sdk').projectDir = new File(rootProject.projectDir, '../node_modules/@terminus/react-native-amap-sdk/android/map2damap')
+
+apply from: file("../node_modules/@react-native-community/cli-platform-android/native_modules.gradle"); applyNativeModulesSettingsGradle(settings)
+
+include ':app'
+apply from: file("../node_modules/@terminus/react-native-channel-manager/sub_channel.gradle"); applyChannelNativeModulesSettingsGradle(settings, file('..').absolutePath)

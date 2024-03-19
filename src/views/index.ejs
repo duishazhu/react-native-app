@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html style="height: 100%">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no" />
+    <title>gaia-mobile</title>
+    <meta name="description" content="" />
+    <script>window.__DEV__ = true</script>
+    <% if (htmlWebpackPlugin.options.taOptions.enable){ %>
+      <script>
+        window.$configUrl="/assets/ta/config.json";
+        window.$taUrl="/assets/ta/ta.js";
+        !function(e,n,r,t,a,o,c){e[a]=e[a]||function(){(e[a].q=e[a].q||[]).push(arguments)},e.onerror=function(n,r,t,o,c){e[a]("sendExecError",n,r,t,o,c)},n.addEventListener("error",function(n){e[a]("sendError",n)},!0),o=n.createElement(r),c=n.getElementsByTagName(r)[0],o.async=1,o.src=t,c.parentNode.insertBefore(o,c)}(window,document,"script", $taUrl,"$ta");
+        $ta('start', { distinctId: 0, environment: "<%= htmlWebpackPlugin.options.taOptions.environment %>" });
+      </script>
+    <% } %>
+  </head>
+
+  <body style="height: 100%">
+    <div id="container" style="height: 100%;width: 100vw;display: flex;"></div>
+    <script src='https://res.wx.qq.com/open/js/jweixin-1.6.0.js'></script>
+    <% if (htmlWebpackPlugin.options.cnzz){ %>
+      <div style="height: 0;position:absolute;width:0;opacity: 0;left:100vw;right:100vh;z-index: -1;display: none;overflow: hidden;">
+        <script type="text/javascript" src="<%= htmlWebpackPlugin.options.cnzz %>"></script>
+      </div>
+    <% } %>
+  </body>
+</html>

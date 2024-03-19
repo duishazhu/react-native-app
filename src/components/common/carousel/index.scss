@@ -1,0 +1,40 @@
+.common-carousel {
+  position: relative;
+
+  &.slick-vertical .slick-list .slick-slide {
+    border: 0;
+  }
+
+  .slick-list {
+    overflow: hidden;
+  }
+
+  .dots {
+    margin: 0;
+    list-style: none;
+    padding-left: 0;
+    position: absolute;
+    width: 100%;
+    text-align: center;
+    bottom: 10px;
+    font-size: 0;
+
+    li {
+      font-size: 0;
+      width: 4px;
+      height: 4px;
+      border-radius: 50%;
+      margin: 0 2px;
+      display: inline-block;
+      background-color: #fff;
+
+      &.slick-active {
+        background-color: #888;
+      }
+
+      button {
+        display: none;
+      }
+    }
+  }
+}

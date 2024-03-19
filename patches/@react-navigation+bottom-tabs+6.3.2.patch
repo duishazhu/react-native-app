@@ -1,0 +1,12 @@
+diff --git a/node_modules/@react-navigation/bottom-tabs/lib/module/views/TabBarIcon.js b/node_modules/@react-navigation/bottom-tabs/lib/module/views/TabBarIcon.js
+index 59921fc..9ec66a5 100644
+--- a/node_modules/@react-navigation/bottom-tabs/lib/module/views/TabBarIcon.js
++++ b/node_modules/@react-navigation/bottom-tabs/lib/module/views/TabBarIcon.js
+@@ -50,6 +50,7 @@ const styles = StyleSheet.create({
+     justifyContent: 'center',
+     height: '100%',
+     width: '100%',
++    left: -12.5,
+     // Workaround for react-native >= 0.54 layout bug
+     minWidth: 25
+   },

@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="zh">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <meta name="format-detection" content="telephone=no">
+  <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+  <meta name="apple-mobile-web-app-title" content="<%= htmlWebpackPlugin.options.title %>">
+  <title><%= htmlWebpackPlugin.options.title %></title>
+  {{#seo}}
+  {{#content}}
+  <meta name="description" content="{{content}}">
+  {{/content}}
+  {{#keyword}}
+  <meta name="keywords" content="{{keyword}}">
+  {{/keyword}}
+  {{/seo}}
+  {{#headers}}
+  {{{headers}}}
+  {{/headers}}
+  <% for (var css in htmlWebpackPlugin.files.css) { %><link href="<%=htmlWebpackPlugin.files.css[css] %>" rel="stylesheet"><% } %>
+  {{#cssBundles}}
+  <link rel="stylesheet" type="text/css" href="{{{publicPath}}}">
+  {{/cssBundles}}
+  {{#taOption.taEnable}}
+  <script>
+    !function(e,t,n,s,a,c,i){e[a]=e[a]||function(){(e[a].q=e[a].q||[]).push(arguments)},c=t.createElement(n),i=t.getElementsByTagName(n)[0],c.async=1,c.src=s,i.parentNode.insertBefore(c,i)}(window,document,"script","{{{taOption.taUrl}}}","$ta");
+    $ta('start',{ udata: { uid: 0 }, ak: '{{taOption.tKey}}', url: '{{{taOption.taCollect}}}' })
+  </script>
+  {{/taOption.taEnable}}
+</head>
+
+<body>
+  <div id="root">{{{contentHtml}}}</div>
+  <script>
+    // window.Intl not found || Android wechat Browser
+    if (!window.Intl || /MicroMessenger/i.test(navigator.userAgent) && (navigator.userAgent.indexOf('Android') > -1 || navigator.userAgent.indexOf('Adr') > -1)) {
+      window.Intl = undefined;
+      document.writeln('<script src="https://as.alipayobjects.com/g/component/intl/1.0.1/Intl.js">' + '<' + '/script>');
+      document.writeln('<script src="https://as.alipayobjects.com/g/component/intl/1.0.1/locale-data/jsonp/en.js">' + '<' + '/script>');
+      document.writeln('<script src="https://as.alipayobjects.com/g/component/intl/1.0.1/locale-data/jsonp/zh.js">' + '<' + '/script>');
+    }
+  </script>
+  {{!-- 加载数据然后删除标签 --}}
+  {{#preloadData}}<script type="text/javascript" id="ssr_data">(function(){window._SSR_PRELOAD_DATA_ = ({{{preloadData}}});document.body.removeChild(document.getElementById('ssr_data'));})()</script>{{/preloadData}}
+  {{#jsBundles}}
+  <script type="text/javascript" src="{{{publicPath}}}"></script>
+  {{/jsBundles}}
+  <% for (var chunk in htmlWebpackPlugin.files.js) { %>
+    <script type="text/javascript" src="<%=htmlWebpackPlugin.files.js[chunk] %>"></script>
+  <% } %>
+</body>
+
+</html>

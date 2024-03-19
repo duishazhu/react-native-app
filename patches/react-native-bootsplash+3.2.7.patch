@@ -1,0 +1,18 @@
+diff --git a/node_modules/react-native-bootsplash/ios/RNBootSplash.m b/node_modules/react-native-bootsplash/ios/RNBootSplash.m
+index 8003151..1cb0e02 100755
+--- a/node_modules/react-native-bootsplash/ios/RNBootSplash.m
++++ b/node_modules/react-native-bootsplash/ios/RNBootSplash.m
+@@ -76,7 +76,12 @@ + (void)initWithStoryboard:(NSString * _Nonnull)storyboardName
+   _taskQueue = [[NSMutableArray alloc] init];
+ 
+   UIStoryboard *storyboard = [UIStoryboard storyboardWithName:_storyboardName bundle:nil];
+-  [_rootView setLoadingView:[[storyboard instantiateInitialViewController] view]];
++    
++    UIView *view = [[storyboard instantiateInitialViewController] view];
++    view.autoresizingMask = UIViewAutoresizingNone;
++    view.frame = CGRectMake(0, 0, [UIScreen mainScreen].bounds.size.width, [UIScreen mainScreen].bounds.size.height);
++    [_rootView setLoadingView:view];
++    
+ 
+   [[NSNotificationCenter defaultCenter] removeObserver:rootView
+                                                   name:RCTContentDidAppearNotification
